@@ -12,7 +12,9 @@ repository is exactly what is served.
 | File | Served? | What it is |
 |---|---|---|
 | `index.html` | yes | The entire site. Structure, styles and content in one file. |
+| `logo.svg`, `favicon.svg` | yes | The monogram, rebuilt as vector from measurements of the source image. |
 | `404.html` | yes | Shown for any unknown path. GitHub Pages picks this up by name. |
+| `lab.html` | yes | **The shipped PHUP TEXT front end, running on the site.** 92 KB, single file, no external requests on load or on use. Verified in a headless browser before publishing: zero network calls either way. It is the tool itself, not a demo, which is why a visitor can prove the offline claim in devtools instead of believing it. |
 | `robots.txt` | yes | Allows crawling and points at the sitemap. |
 | `sitemap.xml` | yes | One entry. Enough for a single-page site. |
 | `README.md` | no | This file. Visible to anyone browsing the repository, not part of the site. |
