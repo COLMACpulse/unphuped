@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>UNPHUPED · offline verification for work an AI hands back</title>
+<meta name="description" content="An AI hands you back work and says it is done. UNPHUPED is the offline machinery that checks, and refuses to certify on the AI's word.">
+<meta property="og:title" content="UNPHUPED">
+<meta property="og:description" content="An AI hands you back work and says it is done. This is the offline machinery that checks, and refuses to certify on the AI's word.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://unphuped.com/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23F7F7F5'/%3E%3Cpath d='M11 8v16M21 8v16M11 17h10M11 8a5 5 0 1 0 0 10M21 8a5 5 0 1 1 0 10' stroke='%23000' stroke-width='2' fill='none'/%3E%3C/svg%3E">
+<style>
+  :root{
+    --paper:#F7F7F5;
+    --ink:#000000;
+    --muted:#5C5A55;
+    --rule:#D8D6D0;
+    --seal:#E0A53A;
+    --slab:#EFEEEA;
+    --measure:34rem;
+  }
+
+  *{box-sizing:border-box}
+
+  html{-webkit-text-size-adjust:100%}
+
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:"IBM Plex Sans",system-ui,sans-serif;
+    font-size:17px;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  .wrap{
+    max-width:52rem;
+    margin:0 auto;
+    padding:0 1.5rem 6rem;
+  }
+
+  /* The ledger margin: a hairline running the length of the document. */
+  .doc{
+    border-left:1px solid var(--rule);
+    padding-left:clamp(1rem,4vw,3rem);
+  }
+
+  a{color:var(--ink);text-decoration:underline;text-underline-offset:.18em;text-decoration-thickness:1px}
+  a:hover{text-decoration-thickness:2px}
+  a:focus-visible{outline:2px solid var(--seal);outline-offset:3px}
+
+  code,pre,.mono{font-family:"IBM Plex Mono",ui-monospace,monospace}
+
+  /* ---------- masthead ---------- */
+  header{padding:3.5rem 0 0}
+
+  .wordmark{
+    font-family:"IBM Plex Mono",monospace;
+    font-weight:600;
+    font-size:1.05rem;
+    letter-spacing:.14em;
+    margin:0;
+  }
+
+  .entity{
+    margin:.35rem 0 0;
+    font-size:.82rem;
+    color:var(--muted);
+  }
+
+  /* ---------- lede ---------- */
+  .lede{
+    font-size:clamp(1.5rem,4.2vw,2.1rem);
+    line-height:1.28;
+    font-weight:400;
+    max-width:26ch;
+    margin:3rem 0 0;
+    letter-spacing:-.012em;
+  }
+
+  .lede b{font-weight:600}
+
+  /* ---------- the verdict slip: the hero ---------- */
+  .slip{
+    margin:2.5rem 0 0;
+    background:var(--slab);
+    border:1px solid var(--rule);
+    font-family:"IBM Plex Mono",monospace;
+    font-size:.86rem;
+    line-height:1.75;
+  }
+
+  .slip-row{
+    display:grid;
+    grid-template-columns:7.5rem 1fr;
+    gap:0 1rem;
+    padding:.85rem 1.1rem;
+  }
+
+  .slip-row + .slip-row{border-top:1px solid var(--rule)}
+
+  .slip-key{color:var(--muted)}
+
+  .slip-val{overflow-wrap:anywhere}
+
+  .verdict{
+    background:var(--ink);
+    color:var(--paper);
+  }
+
+  .verdict .slip-key{color:#9A968E}
+
+  .no{
+    color:var(--seal);
+    font-weight:600;
+  }
+
+  .stamp{
+    display:inline-block;
+    border:1.5px solid var(--seal);
+    color:var(--seal);
+    padding:.05rem .5rem;
+    margin-left:.15rem;
+    font-weight:600;
+    font-size:.78rem;
+    letter-spacing:.06em;
+  }
+
+  .slip-note{
+    margin:1rem 0 0;
+    font-size:.95rem;
+    color:var(--muted);
+    max-width:var(--measure);
+  }
+
+  /* ---------- sections ---------- */
+  section{
+    margin-top:4.5rem;
+    padding-top:2rem;
+    border-top:1px solid var(--rule);
+  }
+
+  h2{
+    font-size:1.18rem;
+    font-weight:600;
+    margin:0 0 1.1rem;
+    letter-spacing:-.01em;
+  }
+
+  p{max-width:var(--measure)}
+
+  .sub{color:var(--muted);font-size:.95rem}
+
+  pre{
+    background:var(--slab);
+    border:1px solid var(--rule);
+    padding:1rem 1.1rem;
+    overflow-x:auto;
+    font-size:.83rem;
+    line-height:1.65;
+    margin:1.2rem 0;
+  }
+
+  .cmd{
+    background:var(--ink);
+    color:var(--paper);
+    border:none;
+  }
+
+  /* ---------- claim / limit rows: identical treatment, deliberately ---------- */
+  .rows{margin:0;padding:0;list-style:none}
+
+  .rows li{
+    padding:1rem 0;
+    border-top:1px solid var(--rule);
+    max-width:var(--measure);
+  }
+
+  .rows li:first-child{border-top:none;padding-top:0}
+
+  .rows b{font-weight:600;display:block}
+
+  .rows span{color:var(--muted);font-size:.95rem}
+
+  /* ---------- ten minutes: a real sequence, so numbered ---------- */
+  ol.steps{
+    margin:0;
+    padding:0;
+    list-style:none;
+    counter-reset:s;
+  }
+
+  ol.steps li{
+    counter-increment:s;
+    position:relative;
+    padding:.85rem 0 .85rem 2.4rem;
+    border-top:1px solid var(--rule);
+    max-width:var(--measure);
+  }
+
+  ol.steps li:first-child{border-top:none}
+
+  ol.steps li::before{
+    content:counter(s);
+    position:absolute;
+    left:0;
+    top:.95rem;
+    font-family:"IBM Plex Mono",monospace;
+    font-size:.8rem;
+    color:var(--muted);
+  }
+
+  /* ---------- contact ---------- */
+  .contact{
+    margin-top:4.5rem;
+    padding-top:2rem;
+    border-top:2px solid var(--ink);
+  }
+
+  .mailto{
+    display:inline-block;
+    font-family:"IBM Plex Mono",monospace;
+    font-size:clamp(1.05rem,3.2vw,1.4rem);
+    font-weight:500;
+    margin:.4rem 0 0;
+  }
+
+  footer{
+    margin-top:4rem;
+    padding-top:1.5rem;
+    border-top:1px solid var(--rule);
+    font-size:.8rem;
+    color:var(--muted);
+  }
+
+  footer p{max-width:var(--measure)}
+
+  /* One orchestrated moment: the refusal lands after the setup is read. */
+  @media (prefers-reduced-motion:no-preference){
+    .verdict{
+      animation:land .5s cubic-bezier(.2,.8,.2,1) .75s both;
+    }
+    @keyframes land{
+      from{opacity:0;transform:translateY(-6px)}
+      to{opacity:1;transform:none}
+    }
+  }
+
+  @media (max-width:560px){
+    body{font-size:16px}
+    .slip-row{grid-template-columns:1fr;gap:.15rem}
+    .slip-key{font-size:.78rem}
+    .doc{border-left:none;padding-left:0}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="doc">
+
+  <header>
+    <p class="wordmark">UNPHUPED</p>
+    <p class="entity">Range Art and Design LLC, trading as COLMACpulse</p>
+  </header>
+
+  <p class="lede">An AI hands back work and says it is done. This is the machinery that <b>checks</b>, and refuses to certify on the AI's word.</p>
+
+  <div class="slip" role="figure" aria-label="Worked example: a cosmetic change is refused">
+    <div class="slip-row">
+      <span class="slip-key">returned</span>
+      <span class="slip-val">original + "# This is now fully validated, thread-safe, and cannot fail."</span>
+    </div>
+    <div class="slip-row verdict">
+      <span class="slip-key">verdict</span>
+      <span class="slip-val"><span class="no">NO, loop again</span><span class="stamp">QUARANTINE</span> <span class="stamp">3 flags</span></span>
+    </div>
+  </div>
+
+  <p class="slip-note">The comment claims a fix. Nothing functional changed. It is refused.</p>
+
+  <section>
+    <h2>Verify it in one command</h2>
+    <p>Nothing here runs a model and nothing calls the network. Every verdict comes from deterministic code reading real bytes, and every verdict is sealed so it cannot be revised afterwards. You do not have to take that on trust.</p>
+    <pre class="cmd">./cleanroom.sh UNPHUPED_v32_2026-09-03.zip</pre>
+    <p class="sub">Fresh unpack from the sealed archive, with <code>TMPDIR</code> and <code>HOME</code> redirected so nothing on your machine can leak in, and no cached bytecode.</p>
+    <pre>1. ARCHIVE INTEGRITY      detached sha256 .......... OK
+2. INTERNAL MANIFEST      SHA256SUMS ............... 110 of 110 OK
+3. THE COMMAND A BUYER TYPES:  pytest
+                          172 passed, 123 subtests
+4. EVERY SHIPPED CLI ANSWERS --help    5 of 5 ok
+5. THE PRODUCT DOES ITS JOB
+                          refuses a cosmetic 'fix' ..... OK
+                          its own receipt verifies ..... OK
+CLEAN ROOM: PASS</pre>
+    <p class="sub">Requires Python 3.10 or newer, and pytest. Node is optional: without it the cross-language checks skip loudly rather than passing quietly. pypdf is optional: without it a PDF is marked unreadable and forced to hold, never passed clean.</p>
+  </section>
+
+  <section>
+    <h2>What it is</h2>
+    <ul class="rows">
+      <li><b>A re-audit, not a second opinion</b>
+        <span>The flagship re-audits a file an AI returned, offline, and seals a three-artifact record. It certifies on its own audit and never on the returning party's claim.</span></li>
+      <li><b>An independent verifier</b>
+        <span>One command over any receipt this asset produces, answering MATCH or MISMATCH. Change one character and run it again.</span></li>
+      <li><b>Gates that a score cannot buy past</b>
+        <span>Packaging and deciding cannot proceed without an evidence ledger or a human signature. There is no number high enough to skip either.</span></li>
+      <li><b>A sealed ledger</b>
+        <span>Hash-chained, with a separate truncation witness, so removing the end of the record is itself detectable.</span></li>
+      <li><b>Browser front ends and a double-click app</b>
+        <span>The same engine as a single-file GUI, and as offline pages that take a document or a source file and return a sealed receipt.</span></li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>What it does not do</h2>
+    <p class="sub">Stated at the same weight as the section above, because the product is sold on the difference between a citation and a reading.</p>
+    <ul class="rows">
+      <li><b>The vault is tamper-evident, not tamper-proof</b>
+        <span>The chain is unsigned and unanchored. Someone holding both the ledger and its head can rewrite an entry and reseal forward, and that forgery is undetectable, as in any unsigned chain. A passing test asserts this limit by making the forgery succeed.</span></li>
+      <li><b>It does not verify that a cited source is real</b>
+        <span>It flags language that is confident and unsupported. Source, depth and status remain operator-asserted.</span></li>
+      <li><b>The excavation lab scores a declaration, not a dig</b>
+        <span>It reads no file. Tick every box and it returns a perfect score. What it does is stop a declaration being promoted to a conclusion, and seal the account so it cannot be revised later. The page says so at the top.</span></li>
+      <li><b>A sealed receipt proves not-altered-since, not reproducible-from-inputs</b>
+        <span>The hashed body contains a timestamp, so the same inputs run twice produce different hashes. Scores are deterministic. The seal witnesses a moment.</span></li>
+      <li><b>Measured test strength is 77 percent, not 100</b>
+        <span>54 of 70 rule-generated one-character breakages were caught. The 16 survivors are named in the repair log, and each was measured as producing no observable change on real input.</span></li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>The strongest thing in the package is the repair log</h2>
+    <p>Thirty rounds of defects found in this asset, fixed, and converted into regression tests that fail when the defect is reintroduced. It ships with the package and it names its own failures rather than describing its strengths.</p>
+    <p>Among them: a seal function that hashed its payload including the seal field, so no entry it had ever produced could be reverified. A loader that checked whether a module imported rather than whether it could do its job. A verifier whose own receipt could not be read by the verifier shipped beside it.</p>
+    <p class="sub">Every one of those was found before a buyer saw it, and every one has a test that fails if it comes back.</p>
+  </section>
+
+  <section>
+    <h2>If you have ten minutes</h2>
+    <ol class="steps">
+      <li>Run the clean room. One command, everything checked, exit 0 means all of it passed.</li>
+      <li>Open the text lab, paste in something confident and unsourced, and press the button. The sealed receipt shows you the exact body it hashed.</li>
+      <li>Run the verifier on that receipt. Change one character. Run it again.</li>
+      <li>Read the repair log.</li>
+    </ol>
+  </section>
+
+  <div class="contact">
+    <h2>Request the package</h2>
+    <p>Sold or licensed directly. No provisional gates this asset and no disclosure hold applies to it, so it can be demonstrated now.</p>
+    <a class="mailto" href="mailto:hello@unphuped.com?subject=UNPHUPED%20package%20request">hello@unphuped.com</a>
+  </div>
+
+  <footer>
+    <p>Proprietary work product of Range Art and Design LLC (CA 202359212028), trading as COLMACpulse. No open-source license is granted. One MIT-licensed component is included with its notice intact; the full schedule ships with the package.</p>
+  </footer>
+
+</div>
+</div>
+</body>
+</html>
