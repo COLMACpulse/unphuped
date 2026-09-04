@@ -13,10 +13,8 @@ repository is exactly what is served.
 |---|---|---|
 | `index.html` | yes | The entire site. Structure, styles and content in one file. |
 | `404.html` | yes | Shown for any unknown path. GitHub Pages picks this up by name. |
-| `CNAME` | no | Tells GitHub Pages the custom domain is `unphuped.com`. One line, bare domain, no scheme and no trailing slash. |
 | `robots.txt` | yes | Allows crawling and points at the sitemap. |
 | `sitemap.xml` | yes | One entry. Enough for a single-page site. |
-| `.nojekyll` | no | Stops GitHub running the page through Jekyll. Not strictly needed for plain HTML, included so a future file beginning with an underscore does not silently vanish. |
 | `README.md` | no | This file. Visible to anyone browsing the repository, not part of the site. |
 
 Fonts are the only external request the page makes.
@@ -25,25 +23,30 @@ Fonts are the only external request the page makes.
 
 ## Deploying
 
-1. Push these files to the repository root on the default branch.
-2. **Settings → Pages → Build and deployment → Deploy from a branch**, select that
+1. Put these files in the repository root on the default branch.
+2. **Settings → Pages → Build and deployment → Deploy from a branch**, pick that
    branch and the `/ (root)` folder.
-3. In the same screen, put `unphuped.com` in **Custom domain**. GitHub will keep
-   `CNAME` in step with that field, so change it in one place, not both.
-4. At the DNS host, point the apex and the `www` label at GitHub:
+3. Wait a minute. The site is live at `https://colmacpulse.github.io/<repo>/`.
 
-   ```
-   A      @      185.199.108.153
-   A      @      185.199.109.153
-   A      @      185.199.110.153
-   A      @      185.199.111.153
-   CNAME  www    <account>.github.io.
-   ```
+That is the whole thing. No build, no action, no workflow file.
 
-   Those four addresses are GitHub's published apex targets. Confirm them against
-   GitHub's current documentation before relying on them; they have changed before.
-5. Wait for DNS to propagate, then tick **Enforce HTTPS**. The certificate is
-   issued automatically and the tickbox stays greyed out until it exists.
+---
+
+## Later, when the domain is ready
+
+There is deliberately **no `CNAME` file here**. A `CNAME` in the repository with no
+DNS behind it makes GitHub try to serve the custom domain, fail, and take the
+github.io address down with it. So it is left out until the DNS exists.
+
+When you get to it:
+
+1. Point the domain at GitHub in the DNS host's control panel. Delete any default
+   parking or redirect records first, or they will fight yours.
+2. **Settings → Pages → Custom domain**, type `unphuped.com`, Save. GitHub creates
+   the `CNAME` file itself at that moment. Set it there, not by hand, so the file
+   and the setting cannot disagree.
+3. Tick **Enforce HTTPS** once it stops being greyed out. The certificate is issued
+   automatically and that can take a few hours.
 
 ---
 
