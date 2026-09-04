@@ -12,7 +12,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23F7F7F5'/%3E%3Cpath d='M11 8v16M21 8v16M11 17h10M11 8a5 5 0 1 0 0 10M21 8a5 5 0 1 1 0 10' stroke='%23000' stroke-width='2' fill='none'/%3E%3C/svg%3E">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
 <style>
   :root{
     --paper:#F7F7F5;
@@ -59,6 +59,11 @@
   /* ---------- masthead ---------- */
   header{padding:3.5rem 0 0}
 
+
+  .mast{display:flex;align-items:center;gap:.72rem}
+  .mark{display:block;width:2.6rem;color:var(--ink);flex:none}
+  .mark svg{display:block;width:100%;height:auto}
+
   .wordmark{
     font-family:"IBM Plex Mono",monospace;
     font-weight:600;
@@ -68,7 +73,7 @@
   }
 
   .entity{
-    margin:.35rem 0 0;
+    margin:.5rem 0 0;
     font-size:.82rem;
     color:var(--muted);
   }
@@ -125,7 +130,7 @@
     border:1.5px solid var(--seal);
     color:var(--seal);
     padding:.05rem .5rem;
-    margin-left:.15rem;
+    margin-left:.55rem;
     font-weight:600;
     font-size:.78rem;
     letter-spacing:.06em;
@@ -264,7 +269,10 @@
 <div class="doc">
 
   <header>
-    <p class="wordmark">UNPHUPED</p>
+    <div class="mast">
+      <span class="mark" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 194 146" role="img" aria-label="PHUP monogram: two mirrored bowls flanking an H, forming a gate"><g fill="none" stroke="currentColor" stroke-width="5.4" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4"><path d="M60 136 V10 H48.4 A36 36 0 1 0 42.1 81.4 H52.4"/><path d="M134.1 136 V10 H145.7 A36 36 0 1 1 152 81.4 H141.7"/><path d="M60 94.1 H134.1"/></g></svg></span>
+      <p class="wordmark">UNPHUPED</p>
+    </div>
     <p class="entity">Range Art and Design LLC, trading as COLMACpulse</p>
   </header>
 
@@ -286,17 +294,35 @@
   <section>
     <h2>Verify it in one command</h2>
     <p>Nothing here runs a model and nothing calls the network. Every verdict comes from deterministic code reading real bytes, and every verdict is sealed so it cannot be revised afterwards. You do not have to take that on trust.</p>
-    <pre class="cmd">./cleanroom.sh UNPHUPED_v32_2026-09-03.zip</pre>
+    <p class="sub">You are sent two files, the archive and its detached <code>.sha256</code>. Keep them side by side. Unzipping gives you a <code>UNPHUPED_WORK</code> folder next to them.</p>
+    <pre class="cmd">cd UNPHUPED_WORK
+./cleanroom.sh ../UNPHUPED_v33_2026-09-04.zip</pre>
+    <p class="sub">The relative path matters. <code>cleanroom.sh</code> lives inside that folder and the archive does not, so a bare filename resolves to nothing and the script refuses with <code>no such archive</code> rather than guessing. Without the <code>.sha256</code> beside the archive, step 1 reports <code>NOT SUPPLIED (skipped)</code> rather than passing quietly.</p>
+    <p class="sub">On Windows this needs WSL or Git Bash, since it is a shell script. Without either, <code>py -m pytest</code> runs the same suite as step 3. It does not check the archive hash or the manifest, and that is said here rather than left for you to find out.</p>
     <p class="sub">Fresh unpack from the sealed archive, with <code>TMPDIR</code> and <code>HOME</code> redirected so nothing on your machine can leak in, and no cached bytecode.</p>
-    <pre>1. ARCHIVE INTEGRITY      detached sha256 .......... OK
-2. INTERNAL MANIFEST      SHA256SUMS ............... 110 of 110 OK
+    <pre>1. ARCHIVE INTEGRITY
+  detached sha256 .............. OK
+
+2. INTERNAL MANIFEST
+  SHA256SUMS ................... 110 of 110 OK
+
 3. THE COMMAND A BUYER TYPES:  pytest
-                          172 passed, 123 subtests
-4. EVERY SHIPPED CLI ANSWERS --help    5 of 5 ok
+     177 passed, 123 subtests passed in 7.74s
+  bare pytest .................. PASSED
+
+4. EVERY SHIPPED CLI ANSWERS --help
+  phup_one.py --help         ok
+  phup_verify.py --help      ok
+  bmacsboot.py --help        ok
+  vault_seal.py --help       ok
+  phup_to_receipt_gate.py --help ok
+
 5. THE PRODUCT DOES ITS JOB
-                          refuses a cosmetic 'fix' ..... OK
-                          its own receipt verifies ..... OK
+  refuses a cosmetic &#x27;fix&#x27; ..... OK
+  its own receipt verifies ..... OK
+
 CLEAN ROOM: PASS</pre>
+    <p class="sub">That block is a verbatim run, not a transcription. Elapsed time varies by machine. Everything else should match line for line.</p>
     <p class="sub">Requires Python 3.10 or newer, and pytest. Node is optional: without it the cross-language checks skip loudly rather than passing quietly. pypdf is optional: without it a PDF is marked unreadable and forced to hold, never passed clean.</p>
   </section>
 
